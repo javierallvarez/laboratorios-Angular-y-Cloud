@@ -24,7 +24,7 @@ jobs:
 
       - name: Build 🏗️
         run: |
-          npx ng build --base-href /laboratorios-Angular-y-Cloud/
+          npx ng build --base-href /${{ github.event.repository.name }}/
           cp dist/gam-docs/index.html dist/gam-docs/404.html
 
       - name: Deploy 🚀
