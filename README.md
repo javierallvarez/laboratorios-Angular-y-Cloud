@@ -15,3 +15,6 @@ He creado esta app con Angular para cubrir mi necesidad de tener a mano los coma
 10. Persitencia añadida, estado de autenticación y nuevos comandos se guardan en localstorage
 
 -Master Front End XVII - Módulo 7 - Cloud - Descripción Laboratorio
+1. Desplegado en Github Pages de forma manual
+2. Automaticé el proceso de despliegue
+
