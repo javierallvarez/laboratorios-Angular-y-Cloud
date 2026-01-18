@@ -1,0 +1,129 @@
+<!-- Main layout with sidebar -->
+<div class="flex min-h-screen bg-gradient-to-br from-gray-50 via-primary-50 to-secondary-50">
+  
+  <!-- Left sidebar -->
+  <app-sidebar
+    [categories]="categories"
+    [selectedCategory]="selectedCategory"
+    (onSelectCategory)="filterByCategory($event)">
+  </app-sidebar>
+
+  <!-- Main content -->
+  <main class="flex-1 ml-64">
+    <!-- Header with auth only -->
+    <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-lg shadow-md border-b-2 border-accent px-8 py-4">
+      <div class="flex items-center justify-between gap-6">
+        <!-- Title with badge -->
+        <div class="flex items-center gap-3">
+          <h2 class="text-3xl font-bold text-primary-950">
+            {{ selectedCategory === 'All' ? 'All Commands' : selectedCategory }}
+          </h2>
+          <app-tag 
+            [label]="filteredCommands.length + ' commands'" 
+            variant="secondary"
+            shape="pill"
+            customClass="text-xs">
+          </app-tag>
+        </div>
+        
+        <!-- Right side: Auth -->
+        <div class="flex items-center gap-2">
+          <ng-container *ngIf="!isLoggedIn">
+            <app-button 
+              label="Login" 
+              icon="pi pi-user" 
+              variant="secondary"
+              (onClick)="goToLogin()">
+            </app-button>
+          </ng-container>
+
+          <ng-container *ngIf="isLoggedIn">
+            <div class="flex items-center gap-2 px-3 py-1 bg-primary-50 rounded-full border border-primary-100 mr-2" *ngIf="currentUser">
+              <i class="pi pi-user text-primary-600"></i>
+              <span class="text-sm font-medium text-primary-800 capitalize">Welcome, {{ currentUser!.split('@')[0] }}</span>
+            </div>
+
+            <app-button 
+              label="Admin Panel" 
+              icon="pi pi-cog" 
+              variant="secondary"
+              (onClick)="goToAdmin()">
+            </app-button>
+            <app-button 
+              icon="pi pi-sign-out" 
+              variant="secondary"
+              tooltip="Logout"
+              tooltipPosition="bottom"
+              customClass="w-10 h-10 !px-0 rounded-full flex items-center justify-center"
+              (onClick)="logout()">
+            </app-button>
+          </ng-container>
+        </div>
+      </div>
+    </header>
+
+    <!-- Commands list container -->
+    <div class="px-8 py-8">
+      <div class="max-w-6xl mx-auto">
+        
+        <!-- Centered Search Bar -->
+        <div class="flex justify-center mb-10">
+          <div class="relative w-full max-w-lg">
+            <input 
+              type="text" 
+              pInputText 
+              [(ngModel)]="searchQuery"
+              (ngModelChange)="onSearch()"
+              placeholder="Search commands"
+              class="w-full py-3 px-6 text-base border-0 shadow-lg rounded-2xl focus:ring-2 focus:ring-accent/30 placeholder-primary-300"
+            />
+          </div>
+        </div>
+
+        <!-- Empty state -->
+        <div *ngIf="filteredCommands.length === 0" class="text-center py-20 fade-in">
+          <i class="pi pi-inbox text-8xl text-primary-300 mb-6"></i>
+          <h3 class="text-2xl font-bold text-primary-700 mb-3">No commands found</h3>
+          <p class="text-primary-500 text-lg mb-6">Try another search or select a different category</p>
+          <p-button 
+            label="View all" 
+            icon="pi pi-refresh" 
+            (onClick)="filterByCategory('All')"
+            severity="info">
+          </p-button>
+        </div>
+
+        <!-- Commands grid -->
+        <div class="grid gap-6">
+          <app-command-card
+            *ngFor="let command of filteredCommands; let i = index"
+            [command]="command"
+            [style.animation-delay]="i * 0.05 + 's'"
+            class="fade-in">
+          </app-command-card>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-primary-950 text-white mt-auto border-t border-primary-900">
+      <div class="max-w-6xl mx-auto px-8 py-12">
+        <div class="flex flex-col items-center justify-center text-center space-y-6">
+          <!-- Logo -->
+          <app-logo heightClass="h-20" variant="white"></app-logo>
+          
+          <!-- Description -->
+          <p class="text-primary-300 text-sm max-w-md leading-relaxed">
+            Personal documentation of GAM <br><span class="text-primary-500 text-xs">(Google Admin Manager)</span> commands 
+          </p>
+          
+          <div class="pt-6 border-t border-primary-900 w-full max-w-lg">
+            <p class="text-primary-400 text-xs flex items-center justify-center gap-1">
+              Made with <i class="pi pi-heart-fill text-xs text-accent"></i> and Angular by Javier AllVarez • {{ getCurrentYear() }}
+            </p>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </main>
+</div>
