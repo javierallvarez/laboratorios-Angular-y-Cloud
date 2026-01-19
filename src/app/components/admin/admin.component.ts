@@ -93,6 +93,7 @@ import { Router } from '@angular/router';
               label="Back to App" 
               icon="pi pi-arrow-left" 
               variant="secondary"
+              customClass="[&_.p-button-label]:hidden min-[818px]:[&_.p-button-label]:inline-block"
               (onClick)="goHome()">
             </app-button>
             <app-button 

@@ -5,24 +5,38 @@
   <app-sidebar
     [categories]="categories"
     [selectedCategory]="selectedCategory"
-    (onSelectCategory)="filterByCategory($event)">
+    [collapsed]="isSidebarCollapsed"
+    [isMobileOpen]="isMobileSidebarOpen"
+    (onSelectCategory)="filterByCategory($event)"
+    (onToggleCollapse)="onSidebarToggle($event)"
+    (onMobileClose)="closeMobileSidebar()">
   </app-sidebar>
 
   <!-- Main content -->
-  <main class="flex-1 ml-64">
+  <main 
+    class="flex-1 transition-all duration-300 ease-in-out ml-0"
+    [ngClass]="{'lg:ml-64': !isSidebarCollapsed, 'lg:ml-20': isSidebarCollapsed}">
+    
     <!-- Header with auth only -->
-    <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-lg shadow-md border-b-2 border-accent px-8 py-4">
+    <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-lg shadow-md border-b-2 border-accent px-4 lg:px-8 py-4">
       <div class="flex items-center justify-between gap-6">
-        <!-- Title with badge -->
+        <!-- Title with badge and hamburger -->
         <div class="flex items-center gap-3">
-          <h2 class="text-3xl font-bold text-primary-950">
+          <!-- Mobile Hamburger -->
+          <button 
+            (click)="toggleMobileSidebar()"
+            class="lg:hidden p-2 text-primary-600 hover:bg-primary-50 rounded-lg mr-1 transition-colors">
+            <i class="pi pi-bars text-2xl"></i>
+          </button>
+
+          <h2 class="text-2xl lg:text-3xl font-bold text-primary-950 hidden min-[818px]:block">
             {{ selectedCategory === 'All' ? 'All Commands' : selectedCategory }}
           </h2>
           <app-tag 
             [label]="filteredCommands.length + ' commands'" 
             variant="secondary"
             shape="pill"
-            customClass="text-xs">
+            customClass="text-xs hidden sm:inline-flex">
           </app-tag>
         </div>
         
@@ -40,13 +54,14 @@
           <ng-container *ngIf="isLoggedIn">
             <div class="flex items-center gap-2 px-3 py-1 bg-primary-50 rounded-full border border-primary-100 mr-2" *ngIf="currentUser">
               <i class="pi pi-user text-primary-600"></i>
-              <span class="text-sm font-medium text-primary-800 capitalize">Welcome, {{ currentUser!.split('@')[0] }}</span>
+              <span class="text-sm font-medium text-primary-800 capitalize"><span class="hidden min-[818px]:inline">Welcome, </span>{{ currentUser!.split('@')[0] }}</span>
             </div>
 
             <app-button 
               label="Admin Panel" 
               icon="pi pi-cog" 
               variant="secondary"
+              customClass="[&_.p-button-label]:hidden min-[818px]:[&_.p-button-label]:inline-block"
               (onClick)="goToAdmin()">
             </app-button>
             <app-button 

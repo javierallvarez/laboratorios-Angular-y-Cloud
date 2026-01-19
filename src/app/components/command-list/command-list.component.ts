@@ -4,7 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { GamCommandsService } from '../../services/gam-commands.service';
 import { GamCommand } from '../../models/gam-command.model';
-import { AuthService } from '../../services/auth.service'; // Import AuthService
+import { AuthService } from '../../services/auth.service';
+import { LayoutService } from '../../services/layout.service';
 import { CommandCardComponent } from '../command-card/command-card.component';
 import { ButtonComponent } from '../shared/button/button.component';
 import { TagComponent } from '../shared/tag/tag.component';
@@ -50,15 +51,29 @@ export class CommandListComponent implements OnInit {
   searchQuery: string = '';
   isLoggedIn: boolean = false;
   currentUser: string | null = null;
+  
+  // Sidebar state
+  isSidebarCollapsed: boolean = false;
+  isMobileSidebarOpen: boolean = false;
 
   constructor(
     private gamCommandsService: GamCommandsService,
     private route: ActivatedRoute,
     private router: Router,
-    private authService: AuthService // Inject AuthService
+    private authService: AuthService,
+    private layoutService: LayoutService
   ) {}
 
   ngOnInit(): void {
+    // Subscribe to layout state
+    this.layoutService.isSidebarCollapsed$.subscribe(collapsed => {
+      this.isSidebarCollapsed = collapsed;
+    });
+
+    this.layoutService.isMobileSidebarOpen$.subscribe(open => {
+      this.isMobileSidebarOpen = open;
+    });
+
     // Subscribe to auth state
     this.authService.isLoggedIn$.subscribe(status => {
       this.isLoggedIn = status;
@@ -144,5 +159,18 @@ export class CommandListComponent implements OnInit {
 
   logout(): void {
     this.authService.logout();
+  }
+
+  // Sidebar handlers
+  onSidebarToggle(collapsed: boolean) {
+    this.layoutService.setSidebarCollapsed(collapsed);
+  }
+
+  toggleMobileSidebar() {
+    this.layoutService.toggleMobileSidebar();
+  }
+
+  closeMobileSidebar() {
+    this.layoutService.closeMobileSidebar();
   }
 }

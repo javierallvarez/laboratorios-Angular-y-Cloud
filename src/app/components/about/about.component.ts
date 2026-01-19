@@ -6,6 +6,7 @@ import { DividerModule } from 'primeng/divider';
 import { ButtonComponent } from '../shared/button/button.component';
 import { SidebarComponent } from '../shared/sidebar/sidebar.component';
 import { GamCommandsService } from '../../services/gam-commands.service';
+import { LayoutService } from '../../services/layout.service';
 
 @Component({
   selector: 'app-about',
@@ -16,12 +17,29 @@ import { GamCommandsService } from '../../services/gam-commands.service';
       <app-sidebar
         [categories]="categories"
         [selectedCategory]="''"
-        (onSelectCategory)="onCategorySelect($event)">
+        [collapsed]="isSidebarCollapsed"
+        [isMobileOpen]="isMobileSidebarOpen"
+        (onSelectCategory)="onCategorySelect($event)"
+        (onToggleCollapse)="onSidebarToggle($event)"
+        (onMobileClose)="closeMobileSidebar()">
       </app-sidebar>
 
-      <main class="flex-1 ml-64 p-4">
-        <div class="max-w-4xl mx-auto mt-8">
-          <div class="mb-2">
+      <main 
+        class="flex-1 transition-all duration-300 ease-in-out ml-0"
+        [ngClass]="{'lg:ml-64': !isSidebarCollapsed, 'lg:ml-20': isSidebarCollapsed}">
+        
+        <!-- Mobile Header (Visible only on mobile) -->
+        <header class="lg:hidden sticky top-0 z-40 bg-white/95 backdrop-blur-lg shadow-sm px-4 py-3 flex items-center mb-4">
+          <button 
+            (click)="toggleMobileSidebar()"
+            class="p-2 text-primary-600 hover:bg-primary-50 rounded-lg mr-3 transition-colors">
+            <i class="pi pi-bars text-xl"></i>
+          </button>
+          <h1 class="text-xl font-bold text-gray-900">About GAM</h1>
+        </header>
+
+        <div class="max-w-4xl mx-auto mt-4 lg:mt-8 p-4">
+          <div class="mb-2 hidden lg:block">
             <h1 class="text-4xl font-bold text-gray-900 mb-2">About GAM</h1>
             <p class="text-gray-500 text-lg">Google Admin Manager</p>
           </div>
@@ -110,14 +128,25 @@ import { GamCommandsService } from '../../services/gam-commands.service';
 })
 export class AboutComponent implements OnInit {
   categories: string[] = [];
+  isSidebarCollapsed: boolean = false;
+  isMobileSidebarOpen: boolean = false;
 
   constructor(
     private router: Router,
-    private gamService: GamCommandsService
+    private gamService: GamCommandsService,
+    private layoutService: LayoutService
   ) {}
 
   ngOnInit() {
     this.categories = this.gamService.getCategories();
+
+    this.layoutService.isSidebarCollapsed$.subscribe(collapsed => {
+      this.isSidebarCollapsed = collapsed;
+    });
+
+    this.layoutService.isMobileSidebarOpen$.subscribe(open => {
+      this.isMobileSidebarOpen = open;
+    });
   }
 
   onCategorySelect(category: string) {
@@ -126,6 +155,18 @@ export class AboutComponent implements OnInit {
     } else {
       this.router.navigate(['/', category]);
     }
+  }
+
+  onSidebarToggle(collapsed: boolean) {
+    this.layoutService.setSidebarCollapsed(collapsed);
+  }
+
+  toggleMobileSidebar() {
+    this.layoutService.toggleMobileSidebar();
+  }
+
+  closeMobileSidebar() {
+    this.layoutService.closeMobileSidebar();
   }
 
   openLink(url: string) {
