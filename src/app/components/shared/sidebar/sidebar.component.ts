@@ -59,8 +59,10 @@ import { TooltipModule } from 'primeng/tooltip';
           <li *ngFor="let category of categories">
             <button
               (click)="selectCategory(category)"
-              [pTooltip]="collapsed ? category : ''"
+              [pTooltip]="category"
+              [tooltipDisabled]="!collapsed"
               tooltipPosition="right"
+              [showDelay]="150"
               [ngClass]="{
                 'bg-white text-primary-700 shadow-lg': selectedCategory === category,
                 'text-primary-100 hover:bg-white/10 hover:text-white': selectedCategory !== category,
@@ -95,8 +97,10 @@ import { TooltipModule } from 'primeng/tooltip';
         <div class="space-y-2">
           <button
             (click)="navigateTo('/about')"
-            [pTooltip]="collapsed ? 'About GAM' : ''"
+            pTooltip="About GAM"
+            [tooltipDisabled]="!collapsed"
             tooltipPosition="right"
+            [showDelay]="150"
             [ngClass]="{'justify-center': collapsed, 'space-x-2 px-3': !collapsed}"
             class="w-full flex items-center py-2 text-sm text-primary-100 hover:text-white hover:bg-white/10 rounded-lg transition-colors border border-transparent bg-transparent cursor-pointer"
             pRipple>
@@ -106,8 +110,10 @@ import { TooltipModule } from 'primeng/tooltip';
           <!-- More links... could be refactored to loop but explicit is fine -->
           <button
             (click)="openLink('https://github.com/GAM-team/GAM')"
-            [pTooltip]="collapsed ? 'GAM GitHub' : ''"
+            pTooltip="GAM GitHub"
+            [tooltipDisabled]="!collapsed"
             tooltipPosition="right"
+            [showDelay]="150"
             [ngClass]="{'justify-center': collapsed, 'space-x-2 px-3': !collapsed}"
             class="w-full flex items-center py-2 text-sm text-primary-100 hover:text-white hover:bg-white/10 rounded-lg transition-colors border border-transparent bg-transparent cursor-pointer"
             pRipple>
@@ -116,8 +122,10 @@ import { TooltipModule } from 'primeng/tooltip';
           </button>
           <button
             (click)="openLink('https://admin.google.com')"
-            [pTooltip]="collapsed ? 'Admin Console' : ''"
+            pTooltip="Admin Console"
+            [tooltipDisabled]="!collapsed"
             tooltipPosition="right"
+            [showDelay]="150"
             [ngClass]="{'justify-center': collapsed, 'space-x-2 px-3': !collapsed}"
             class="w-full flex items-center py-2 text-sm text-primary-100 hover:text-white hover:bg-white/10 rounded-lg transition-colors border border-transparent bg-transparent cursor-pointer"
             pRipple>
